@@ -21,7 +21,7 @@ public class UpdateSpline : MonoBehaviour
 
     public void OnRadiusSliderChanged()
     {
-        splineExtrude.Radius = slider.value / 4;
+        splineExtrude.Radius = slider.value / 8;
         splineExtrude.Rebuild();
     }
 

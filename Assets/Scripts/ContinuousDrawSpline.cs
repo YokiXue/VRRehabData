@@ -21,6 +21,9 @@ public class ContinuousDrawSpline : MonoBehaviour
     [Header("Splines")]
     [SerializeField] private SplineContainer splineContainer;
     [SerializeField] private SplineInstantiate splineInstantiate;
+    [SerializeField] private GameObject RadiusClone;
+    [SerializeField] private SplineContainer splineContainerRadius;
+    [SerializeField] private SplineExtrude splineExtrudeRadius;
 
     // Used for visualising anchorpoints
     [Header("Visuals")]
@@ -134,6 +137,9 @@ public class ContinuousDrawSpline : MonoBehaviour
     public void CopySplineToVisualizeRadius()
     {
         // TODO: actually do it lol, maybe move to editspline class
+        RadiusClone.SetActive(true);
+        splineContainerRadius.Spline = splineContainer.Spline;
+        //splineExtrudeRadius.GetComponent<MeshRenderer>().enabled = true;
     }
 
     #region Input Actions

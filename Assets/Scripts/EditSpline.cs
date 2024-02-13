@@ -8,22 +8,27 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class EditSpline : MonoBehaviour
 {
-
-    [Header("Spline specifics from level build")]
+    [Header("Spline specifics for therapist")]
     [SerializeField] private ContinuousDrawSpline continuousDrawSplineTherapist;
     [SerializeField] private SplineContainer splineContainerTherapist;
     [SerializeField] private SplineExtrude splineExtrudeTherapist;
     [SerializeField] private SplineInstantiate splineInstantiateTherapist;
 
-    [Header("Spline specifics from player")]
+    [Header("Spline radius")]
+    [SerializeField] private SplineContainer splineContainerRadius;
+    [SerializeField] private SplineExtrude splineExtrudeRadius;
+
+    [Header("Spline specifics for player")]
     [SerializeField] private SplineInstantiate splineInstantiatePlayer;
     [SerializeField] private ContinuousDrawSpline continuousDrawSplinePlayer;
 
     private MeshRenderer splineMeshRenderer;
+    private MeshRenderer splineMeshRendererRadius;
 
     private void Start()
     {
         splineMeshRenderer = splineContainerTherapist.GetComponent<MeshRenderer>();
+        splineMeshRendererRadius = splineExtrudeRadius.GetComponent<MeshRenderer>();
     }
 
     private void FixedUpdate()
@@ -46,6 +51,8 @@ public class EditSpline : MonoBehaviour
                     continuousDrawSplineTherapist.SplineContainer.Spline.SetKnot(i, knotToMove);
 
                     continuousDrawSplineTherapist.IndexOfLastGrabbedAnchor = i;
+
+                    UpdateRadius();
                 }
             }
         }
@@ -75,6 +82,8 @@ public class EditSpline : MonoBehaviour
             // Adds object to spline and save gameobject    
             splineContainerTherapist.Spline.Add(knot, TangentMode.AutoSmooth);
             continuousDrawSplineTherapist.AnchorPoints.Add(knotObj);
+
+            UpdateRadius();
         }
 
     }
@@ -95,6 +104,8 @@ public class EditSpline : MonoBehaviour
                 // Destroys the visual game object and removes from list
                 Destroy(continuousDrawSplineTherapist.AnchorPoints[continuousDrawSplineTherapist.IndexOfLastGrabbedAnchor]);
                 continuousDrawSplineTherapist.AnchorPoints.RemoveAt(continuousDrawSplineTherapist.IndexOfLastGrabbedAnchor);
+
+                UpdateRadius();
             }
            
         }
@@ -112,6 +123,19 @@ public class EditSpline : MonoBehaviour
                 splineExtrudeTherapist.enabled = true;
             else 
                 splineMeshRenderer.enabled = !splineMeshRenderer.enabled;
+        }
+    }
+
+    // TODO: figure out how to display radius if not extrusion (daniel?). Maybe copy spline and only have extrusion
+    public void ToggleRadius()
+    {
+        if (SplineStateManager.CurrentSplineState == SplineDrawState.EditMode ||
+            SplineStateManager.CurrentSplineState == SplineDrawState.PlayMode)
+        {
+            if (!splineExtrudeRadius.enabled)
+                splineExtrudeRadius.enabled = true;
+            else
+                splineMeshRendererRadius.enabled = !splineMeshRendererRadius.enabled;
         }
     }
 
@@ -151,13 +175,12 @@ public class EditSpline : MonoBehaviour
         }
     }
 
-    // TODO: figure out how to display radius if not extrusion (daniel?). Maybe copy spline and only have extrusion
-    public void ToggleRadius()
+    /// <summary>
+    /// To be called whenever a change is made to the original spline (could be an event?)
+    /// </summary>
+    private void UpdateRadius()
     {
-        if (SplineStateManager.CurrentSplineState == SplineDrawState.EditMode ||
-            SplineStateManager.CurrentSplineState == SplineDrawState.PlayMode)
-        {
-            // TODO: set equal to opposite like above
-        }
+        splineContainerRadius.Spline = splineContainerTherapist.Spline;
+        splineExtrudeRadius.Rebuild();
     }
 }
