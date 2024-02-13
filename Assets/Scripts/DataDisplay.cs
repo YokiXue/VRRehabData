@@ -7,6 +7,8 @@ using UnityEngine.Splines;
 
 public class DataDisplay : MonoBehaviour
 {
+    [SerializeField] private ContinuousDrawSpline continuousDrawSplinePlayer;
+
     [SerializeField] private SplineContainer splineContainerTherapist;
     [SerializeField] private TMP_Text trajectoryLength;
 
@@ -19,11 +21,9 @@ public class DataDisplay : MonoBehaviour
 
     public void OnPathFinished()
     {
-        //trajectoryLength.text = SplineUtility.CalculateLength(splineContainerTherapist.Spline, Matrix4x4.identity).ToString();
-        //userPathLength.text = SplineUtility.CalculateLength(splineContainerPlayer.Spline, Matrix4x4.identity).ToString();
-
-        //trajectoryLength.text = splineContainerTherapist.Spline.GetLength().ToString();
-        //userPathLength.text = splineContainerPlayer.Spline.GetLength().ToString();
+        trajectoryLength.text = (SplineUtility.CalculateLength(splineContainerTherapist.Spline, Matrix4x4.identity) * 10).ToString("#.###");
+        userPathLength.text = (SplineUtility.CalculateLength(splineContainerPlayer.Spline, Matrix4x4.identity) * 10).ToString("#.###");
+        timeTaken.text = continuousDrawSplinePlayer.TimeTaken.ToString("#.##") + "s";
     }
 
 
